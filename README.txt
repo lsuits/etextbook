@@ -1,6 +1,6 @@
 This is the LSU Library's Block for displaying information about an E-Textbook for a students course, if an etextbook is available for the course. The sentence was worded poorly. 
 
-The block is based on / built upon the NEWBLOCK template - https://github.com/danielneis/moodle-block_etextbook
+The block is based on / built upon the NEWBLOCK template - https://github.com/danielneis/moodle-block_newblock
 
 
 
@@ -12,19 +12,19 @@ this block template code.
 
 * Unzip the archive and read this file
 
-* Rename the etextbook/ folder to the name of your module (eg "widget").
+* Rename the newblock/ folder to the name of your module (eg "widget").
 The module folder MUST be lower case. You should check the Moodle Plugins
 Database at https://moodle.org/plugins to make sure that
 your name is not already used by an other block. Registering the plugin
 name @ http://moodle.org/plugins will secure it for you.
 
 * Edit all the files in this directory and its subdirectories and change
-all the instances of the string "etextbook" to your module name
+all the instances of the string "newblock" to your module name
 (eg "widget"). If you are using Linux, you can use the following command
-$ find . -type f -exec sed -i 's/etextbook/widget/g' {} \;
+$ find . -type f -exec sed -i 's/newblock/widget/g' {} \;
 
-* Rename the file lang/en/etextbook.php to lang/en/widget.php
-where "widget" is the name of your module. Also rename block_etextbook.php
+* Rename the file lang/en/newblock.php to lang/en/widget.php
+where "widget" is the name of your module. Also rename block_newblock.php
 in the main directory to block_widget.php
 
 * Place the widget folder into the /block folder of the moodle
@@ -41,7 +41,7 @@ and modify the module's tables.
 the module's tables successfully created
 
 * Go to Site Administration > Plugins > Blocks > Manage blocks
-and you should find that this etextbook has been added to the list of
+and you should find that this newblock has been added to the list of
 installed modules.
 
 * You may now proceed to run your own code in an attempt to develop

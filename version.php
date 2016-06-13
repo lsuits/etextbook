@@ -17,7 +17,11 @@
 /**
  * Version details
  *
+<<<<<<< HEAD
  * @package    block_etextbook
+=======
+ * @package    block_newblock
+>>>>>>> d6fa278fee7fb5fdae077de85a15e2e938297a97
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

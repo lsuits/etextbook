@@ -19,6 +19,8 @@
  * Strings for component 'block_etextbook', language 'en'
  *
  * @package   block_etextbook
+ * Strings for component 'block_newblock', language 'en'
+ *
  * @copyright Daniel Neis <danielneis@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
