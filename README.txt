@@ -1,3 +1,10 @@
+This is the LSU Library's Block for displaying information about an E-Textbook for a students course, if an etextbook is available for the course. The sentence was worded poorly. 
+
+The block is based on / built upon the NEWBLOCK template - https://github.com/danielneis/moodle-block_newblock
+
+
+
+
 The following steps should get you up and running with
 this block template code.
 
