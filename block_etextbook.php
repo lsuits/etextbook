@@ -15,82 +15,52 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Newblock block caps.
+ * Block displaying information about whether or not there is an etextbook
+ * for the course
  *
  * @package    block_etextbook
- * @copyright  Daniel Neis <danielneis@gmail.com>
+ * @copyright  2016 Lousiana State University - David Elliott, Robert Russo, Chad Mazilly
+ * @author     David Elliott <delliott@lsu.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 class block_etextbook extends block_base {
 
-    function init() {
-        $this->title = get_string('pluginname', 'block_etextbook');
+    public function init() {
+        $this->title = get_string('etextbook', 'block_etextbook');
     }
 
-    function get_content() {
-        global $CFG, $OUTPUT;
-
-        if ($this->content !== null) {
-            return $this->content;
+    public function get_content() {
+        GLOBAL $COURSE, $CFG, $DB;
+        // Get content from library.
+        $books = simplexml_load_file('http://www.lib.lsu.edu/ebooks/xml');
+        $sql = "SELECT uc.department, uc.cou_number, us.sec_number
+                FROM mdl_course c
+                INNER JOIN mdl_enrol_ues_sections us ON us.idnumber = c.idnumber
+                INNER JOIN mdl_enrol_ues_courses uc ON us.courseid = uc.id
+                WHERE c.id = :courseid";
+        $records = $DB->get_records_sql($sql, array('courseid' => $COURSE->id));
+        $coursenumber = $records['MATH']->cou_number;
+        $sectionnumber = $records['MATH']->sec_number;
+        var_dump($sectionnumber);
+        var_dump(str_pad($sectionnumber, 3, '0', STR_PAD_LEFT));
+        $foundabook = false;
+        foreach ($books as $node) {
+            preg_match("/Section (.*)\</", $node->field_course_number, $matches);
+            $sections = explode(',', $matches[1]);
+            //var_dump($sections);
+            if ( $coursenumber == substr((string) $node->field_course_number, 0, 4) && in_array($sectionnumber, $sections) ) {
+                $astring = get_string('headline', 'block_etextbook') . $node->field_ebook_title;
+                $bookcover = '<img width = "50%" src = " ' . $node->field_ebook_image . ' "> ';
+                $foundabook = true;
+            }
         }
-
-        if (empty($this->instance)) {
-            $this->content = '';
-            return $this->content;
+        if ( $foundabook ) {
+            $this->content = new stdClass;
+            $this->content->text = $astring;
+            $this->content->footer = $bookcover;
         }
-
-        $this->content = new stdClass();
-        $this->content->items = array();
-        $this->content->icons = array();
-        $this->content->footer = '';
-
-        // user/index.php expect course context, so get one if page has module context.
-        $currentcontext = $this->page->context->get_course_context(false);
-
-        if (! empty($this->config->text)) {
-            $this->content->text = $this->config->text;
-        }
-
-        $this->content = '';
-        if (empty($currentcontext)) {
-            return $this->content;
-        }
-        if ($this->page->course->id == SITEID) {
-            $this->content->text .= "site context";
-        }
-
-        if (! empty($this->config->text)) {
-            $this->content->text .= $this->config->text;
-        }
-
         return $this->content;
     }
 
-    // my moodle can only have SITEID and it's redundant here, so take it away
-    public function applicable_formats() {
-        return array('all' => false,
-                     'site' => true,
-                     'site-index' => true,
-                     'course-view' => true, 
-                     'course-view-social' => false,
-                     'mod' => true, 
-                     'mod-quiz' => false);
-    }
-
-    public function instance_allow_multiple() {
-          return true;
-    }
-
-    function has_config() {return true;}
-
-    public function cron() {
-            mtrace( "Hey, my cron script is running" );
-             
-                 // do something
-                  
-                      return true;
-    }
 }
