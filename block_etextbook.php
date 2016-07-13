@@ -42,18 +42,13 @@ class block_etextbook extends block_base {
         $records = $DB->get_records_sql($sql, array('courseid' => $COURSE->id));
         $coursenumber = $records['MATH']->cou_number;
         $sectionnumber = $records['MATH']->sec_number;
-        var_dump($sectionnumber);
         $foundabook = false;
         foreach ($books as $node) {
             preg_match("/Section (.*)\</", $node->field_course_number, $matches);
             $sections = explode(',', $matches[1]);
-            echo '<h1> SECTIONS BEFORE str_pad</h1>';
-            var_dump($sections);
             
             foreach($sections as $section){
-                echo '<h1> SECTION in the SECTIONS array </h1>';
                 $section = str_pad($section, 3, '0', STR_PAD_LEFT);
-                var_dump($section);
             }
             
             if ( $coursenumber == substr((string) $node->field_course_number, 0, 4) && in_array($sectionnumber, $sections) ) {
