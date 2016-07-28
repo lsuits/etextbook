@@ -21,7 +21,7 @@
  * @package    block_etextbook
  * @copyright  2016 Lousiana State University - David Elliott, Robert Russo, Chad Mazilly
  * @author     David Elliott <delliott@lsu.edu> - Along with LSU Moodle Development Team (Robert Russo, Chad Mazily) and LSU Libraries Staff (Emily Frank, David Comeaux, and Jason Peak)
- * @tutorial   http://grok.lsu.edu/ - Stefanie Howell <showel8@lsu.edu>
+ * @tutorial   https://grok.lsu.edu/Browse.aspx?searchString=E-textbooks&pageSize=10&searchDomain=All&parentCategoryId=0 - Stefanie Howell <showel8@lsu.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @todo Make block faster
  */
@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/blocks/etextbook/lib.php');
  * for the course
  *
  * @package    block_etextbook
- * @todo Make block faster
  */
 
 class block_etextbook extends block_base {
@@ -56,9 +55,7 @@ class block_etextbook extends block_base {
         if($COURSE->id === "1"){
             return $this->content;
         }
-        // Get content from library.
-
-
+            /** Get content from library. */
             $books = simplexml_load_file('http://www.lib.lsu.edu/ebooks/xml2');
             $sql = get_course_info_sql();
 
@@ -93,9 +90,9 @@ class block_etextbook extends block_base {
                      * but then those double quotes broke the {$a} object. 
                      * @todo figure out how to do this in a more clean way. 
                     */
-                    $bookstrings->complete = get_string('linktolsulibraries', 'block_etextbook');
-                    $bookstrings->complete = $bookstrings->complete. '<a href = "' . $bookstrings->field_ebook_url . '">'. $bookstrings->field_ebook_title ;
+                    $bookstrings->complete = '<a href = "' . $bookstrings->field_ebook_url . '">'. $bookstrings->field_ebook_title ;
                     $bookstrings->complete = $bookstrings->complete . '<img class = "img-rounded img-responsive etextimg" src = "' . $bookstrings->field_ebook_image . '"></a>';
+                    $bookstrings->complete = $bookstrings->complete . get_string('linktolsulibraries', 'block_etextbook');
 
                     array_push($arrayofbooks, $bookstrings->complete);                
                     $foundabook = true;
@@ -112,8 +109,6 @@ class block_etextbook extends block_base {
             }
             return $this->content;
         }
-
-    
 
 
 }
