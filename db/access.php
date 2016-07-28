@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Etextbook block capabilities.
+ *
+ * @package    block_etextbook
+ * @copyright  David Elliott <delliott@lsu.edu>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
     $capabilities = array(
  
     'block/etextbook:myaddinstance' => array(
