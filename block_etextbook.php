@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/blocks/etextbook/lib.php');
  * for the course
  *
  * @package    block_etextbook
- * #class
  * @todo Make block faster
  */
 
@@ -109,8 +108,8 @@ class block_etextbook extends block_base {
                     $this->content->text = $this->content->text . $booktodisplay;
                     //$this->content->text = $this->content->text . array_pop($arrayofbookcovers);
                 }
+                $this->content->text = $this->content->text . "</div>";
             }
-            $this->content->text = $this->content->text . "</div>";
             return $this->content;
         }
 
