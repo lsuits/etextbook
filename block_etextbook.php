@@ -63,6 +63,7 @@ class block_etextbook extends block_base {
             $department = current($records)->department;
             $coursenumber = current($records)->cou_number;
             $sectionnumber = current($records)->sec_number;
+            $courseinstructor = current($records)->lastname;
             /** @var $foundabook - Boolean Flag to see if we got a result for this course
              * @todo Bad coding style? 
              */
@@ -83,7 +84,7 @@ class block_etextbook extends block_base {
                 foreach($sections as $section){
                     $section = str_pad($section, 3, '0', STR_PAD_LEFT);
                 }  
-                if ( $department == (string)$book->field_ebook_subject && $coursenumber == substr((string) $book->field_course_number, 0, 4) && $sectionnumber == $section) {
+                if ( $department == (string)$book->field_ebook_subject && $coursenumber == substr((string) $book->field_course_number, 0, 4) && $sectionnumber == $section && $courseinstructor == $book->Instructor) {
                     $bookstrings = convert_ebook_xml_to_object($book);
                     /** I made this into a very neat {$a->field_names} get_string situation, but I had to
                      * escape from double quotes, use single quotes to use the double quotes,
@@ -107,7 +108,6 @@ class block_etextbook extends block_base {
                 }
                 $this->content->text = $this->content->text . "</div>";
             }
-            return $this->content;
         }
 
 

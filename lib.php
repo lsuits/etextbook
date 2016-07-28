@@ -48,10 +48,12 @@ defined('MOODLE_INTERNAL') || die();
         GLOBAL $CFG, $DB;
         if($CFG->dbtype == 'mysqli'){
             //MySQL
-            return "SELECT uc.department, uc.cou_number, us.sec_number
+            return "SELECT CONCAT(uc.department, ' ', uc.cou_number, ' ', us.sec_number) AS course, u.lastname, uc.department, uc.cou_number, us.sec_number
                     FROM mdl_course c
-                    INNER JOIN mdl_enrol_ues_sections us ON us.idnumber = c.idnumber
-                    INNER JOIN mdl_enrol_ues_courses uc ON us.courseid = uc.id
-                    WHERE c.id = :courseid";
+                    INNER JOIN {enrol_ues_sections} us ON us.idnumber = c.idnumber
+                    INNER JOIN {enrol_ues_teachers} t ON us.id = t.sectionid
+                    INNER JOIN {user} u ON u.id = t.userid
+                    INNER JOIN {enrol_ues_courses} uc ON us.courseid = uc.id
+                    WHERE t.primary_flag = 1 AND c.id = :courseid";
         }
     }
