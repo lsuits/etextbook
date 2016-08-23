@@ -23,10 +23,6 @@
  * @author     David Elliott <delliott@lsu.edu> - Along with LSU Moodle Development Team (Robert Russo, Chad Mazily) and LSU Libraries Staff (Emily Frank, David Comeaux, and Jason Peak)
  * @tutorial   https://grok.lsu.edu/Browse.aspx?searchString=E-textbooks&pageSize=10&searchDomain=All&parentCategoryId=0 - Stefanie Howell <showel8@lsu.edu>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-<<<<<<< HEAD
-=======
- * @todo Make block faster
->>>>>>> 4bd13cf775360cbfd8b3c92f078ea04323de5573
  */
 
 require_once($CFG->dirroot . '/blocks/etextbook/lib.php');
@@ -39,7 +35,6 @@ require_once($CFG->dirroot . '/blocks/etextbook/lib.php');
  */
 
 class block_etextbook extends block_base {
-    
     /**
      * Function creates block
      * @return void
@@ -47,7 +42,7 @@ class block_etextbook extends block_base {
     public function init() {
         $this->title = get_string('etextbook', 'block_etextbook');
     }
-     /**
+    /**
      * Function gets the xml from the library and populates the blocks content
      * @return string $this->content
      * @access public
@@ -60,15 +55,17 @@ class block_etextbook extends block_base {
             $this->content = new \stdClass;
             $this->content->text = '';
             $arrayofbooks = $DB->get_records($etextbooktable, array("courseid" => $COURSE->id));
+            $htmldiv = "";
             foreach ($arrayofbooks as $book) {
 
-                $htmldiv = '<a href = "' . $book->book_url . '">' . $book->title;
+                $htmldiv .= '<a href = "' . $book->book_url . '">' . $book->title;
                 $htmldiv .='<img class = "img-rounded img-responsive etextimg" src = "' . $book->img_url . '"></a>';
-                $htmldiv .= get_string('linktolsulibraries', 'block_etextbook');
 
-                $this->content->text .= html_writer::div($htmldiv, 'lsulib-etext');
 
             }
+            $htmldiv .= get_string('linktolsulibraries', 'block_etextbook');
+
+            $this->content->text .= html_writer::div($htmldiv, 'lsulib-etext');
         }
         else{
             // No Book for this course
