@@ -32,14 +32,10 @@ class retrieve_etextbooks extends \core\task\scheduled_task
             $termswitcharoo = explode(" ", $tbook->term);
             $tbook->term = $termswitcharoo[1] . " " . $termswitcharoo[0];
 
-            $moodlecourses = "course";
-            $coursenameregexp = $tbook->term . ' ' . $tbook->dept . ' ' . $tbook->course_number . " for +.* " . $tbook->instructor;
-
             if(strlen($tbook->section) > 1){
-                echo "\n\n\n\t\t\t ))))))))))))))))))) MORE THAN ONE SECTION SO EXPLODE RUN FOREACH INSIDE IF STATEMENT";
+                echo "\n\n\t ))))))))))))))))))) MORE THAN ONE SECTION SO EXPLODE RUN FOREACH INSIDE IF STATEMENT";
                 $sections = explode(',', ($tbook->section));
-                echo "\n sections = ";
-                var_dump($sections);
+                echo "\n multiple sections -------- \n ";
                 foreach($sections as $section){
                     $tbook->section = $section;
                     $this->merge_courses_with_books($tbook);
@@ -52,10 +48,9 @@ class retrieve_etextbooks extends \core\task\scheduled_task
     }
     public function merge_courses_with_books($tbook){
         global $DB;
-        echo "\n ------- TBOOOK \n";
         $tbook->courseid = "";
-        var_dump($tbook);
         $coursenameregexp = $tbook->term . ' ' . $tbook->dept . ' ' . $tbook->course_number . ' ' . str_pad($tbook->section, 3, "0", STR_PAD_LEFT);
+        echo "\n\n\t >>>>> Course found that has textbook ---> " . $coursenameregexp;
 
         $sqlt = "SELECT DISTINCT(c.id)
                      FROM mdl_enrol_ues_semesters sem
@@ -68,10 +63,14 @@ class retrieve_etextbooks extends \core\task\scheduled_task
                      AND c.idnumber <> ''
                      AND CONCAT(sem.year, ' ', sem.name, ' ', cou.department, ' ', cou.cou_number, ' ', sec.sec_number) = :coursename";
 
-        $allcourses  = $DB->get_recordset_sql($sqlt, array('coursename' => $coursenameregexp));
         $records = $DB->get_record_sql($sqlt, array('coursename' => $coursenameregexp));
-        $tbook->courseid = $records->id;
-        $DB->insert_record('block_etextbook', $tbook);
+        if($records->id){
+            $tbook->courseid = $records->id;
+            $DB->insert_record('block_etextbook', $tbook);
+        }
+        else{
+            echo "\n\n [][][][][][][][[[[[[[ Book found but no course id \n\n";
+        }
     }
 
 }
