@@ -15,6 +15,7 @@ class retrieve_etextbooks extends \core\task\scheduled_task
         $librarylink = get_config('etextbook', 'Library_link');
         $etxtblktbl = 'block_etextbook';
         $DB->execute("TRUNCATE TABLE {block_etextbook}");
+        $foundbookstring = "";
         $books = simplexml_load_file($librarylink);
         $tbook = new \stdClass();
 
@@ -36,19 +37,30 @@ class retrieve_etextbooks extends \core\task\scheduled_task
                 $sections = explode(',', ($tbook->section));
                 foreach($sections as $section){
                     $tbook->section = $section;
-                    $this->merge_courses_with_books($tbook);
+                    if($foundbookstring == ""){
+                        $foundbookstring = $this->merge_courses_with_books($tbook);
+                    }
+                    else{
+                        $foundbookstring .= "\t" . $this->merge_courses_with_books($tbook);
+                    }
                 }
             }
             else{
-                $this->merge_courses_with_books($tbook);
+                if($foundbookstring == "") {
+                    $foundbookstring = $this->merge_courses_with_books($tbook);
+                }
+                else{
+                    $foundbookstring .= "\t" . $this->merge_courses_with_books($tbook);
+                }
             }
         }
+        echo "\n" . $foundbookstring;
     }
     public function merge_courses_with_books($tbook){
         global $DB;
         $tbook->courseid = "";
         $coursenameregexp = $tbook->term . ' ' . $tbook->dept . ' ' . $tbook->course_number . ' ' . str_pad($tbook->section, 3, "0", STR_PAD_LEFT);
-        echo "\n\t >>>>> Course found that has textbook ---> " . $coursenameregexp;
+        $foundbookstring =  "- " . $tbook->dept . " " . $tbook->course_number;
 
         $sqlt = "SELECT DISTINCT(c.id)
                      FROM {enrol_ues_semesters} sem
@@ -66,8 +78,9 @@ class retrieve_etextbooks extends \core\task\scheduled_task
             $DB->insert_record('block_etextbook', $tbook);
         }
         else{
-            echo "\n ---- ETEXTBOOK ALERT - Book found but no course id \n ---- $coursenameregexp ----";
+            echo "---- ETEXTBOOK ALERT ---- book found but not matched for " .$coursenameregexp . " ---- \n";
         }
+        return $foundbookstring;
     }
 
 }
