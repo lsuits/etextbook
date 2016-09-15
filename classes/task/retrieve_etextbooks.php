@@ -11,14 +11,17 @@ class retrieve_etextbooks extends \core\task\scheduled_task
 
     public function execute()
     {
-        global $CFG, $DB, $COURSE;
+        global $DB;
         $librarylink = get_config('etextbook', 'Library_link');
-        $etxtblktbl = 'block_etextbook';
-        $DB->execute("TRUNCATE TABLE {block_etextbook}");
         $foundbookstring = "";
-        $books = simplexml_load_file($librarylink);
+        if (file_exists($librarylink)) {
+            $books = simplexml_load_file($librarylink);
+            $DB->execute("TRUNCATE TABLE {block_etextbook}");
+        } else {
+            echo('Failed to open xml from the provided link - ' . $librarylink);
+            return;
+        }
         $tbook = new \stdClass();
-
         // For loop to get all course numbers with books
         foreach ($books as $book) {
             $tbook->book_url = (string)$book->field_ebook_url;
