@@ -14,6 +14,25 @@ class retrieve_etextbooks extends \core\task\scheduled_task
         global $DB;
         $librarylink = get_config('etextbook', 'Library_link');
         $foundbookstring = "";
+
+        // Create a cURL handle
+
+        $ch = curl_init($librarylink);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+
+        // Execute
+        $theresult = curl_exec($ch);
+
+        // Check if any error occurred
+        if (!curl_errno($ch)) {
+            $info = curl_getinfo($ch);
+            var_dump($info);
+            echo 'Took ', $info['total_time'], ' seconds to send a request to ', $info['url'], "\n";
+        }
+
+        // Close handle
+        curl_close($ch);
+
         if (file_exists($librarylink)) {
             $books = simplexml_load_file($librarylink);
             $DB->execute("TRUNCATE TABLE {block_etextbook}");
