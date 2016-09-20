@@ -13,32 +13,15 @@ class retrieve_etextbooks extends \core\task\scheduled_task
     {
         global $DB;
         $librarylink = get_config('etextbook', 'Library_link');
+        echo $librarylink;
         $foundbookstring = "";
-
-        // Create a cURL handle
-
-        $ch = curl_init($librarylink);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-
-        // Execute
-        $theresult = curl_exec($ch);
-
-        // Check if any error occurred
-        if (!curl_errno($ch)) {
-            $info = curl_getinfo($ch);
-            var_dump($info);
-            echo 'Took ', $info['total_time'], ' seconds to send a request to ', $info['url'], "\n";
-        }
-
-        // Close handle
-        curl_close($ch);
-
-        if (file_exists($librarylink)) {
-            $books = simplexml_load_file($librarylink);
-            $DB->execute("TRUNCATE TABLE {block_etextbook}");
-        } else {
-            echo('Failed to open xml from the provided link - ' . $librarylink);
+        $books = simplexml_load_file($librarylink);
+        //check that the file actually has something in it.
+        if($books->count() < 1){
             return;
+        }
+        else{
+            $DB->execute("TRUNCATE TABLE {block_etextbook}");
         }
         $tbook = new \stdClass();
         // For loop to get all course numbers with books
