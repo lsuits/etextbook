@@ -12,31 +12,50 @@ class retrieve_etextbooks extends \core\task\scheduled_task
     public function execute()
     {
         global $DB;
+
         $librarylink = get_config('etextbook', 'Library_link');
-        echo $librarylink;
-        $foundbookstring = "";
+        echo "\n library link is \n". $librarylink . "\n";
         $books = simplexml_load_file($librarylink);
-        //check that the file actually has something in it.
-        if($books->count() < 1){
+
+        if($books == false){
+            echo "\n FILE FROM LIBRARY XML WAS NOT ACCEPTED AS XML \n";
             return;
         }
+
+        else if(!isset($books->book->field_ebook_url)){
+            echo "\n DATA DOES NOT CONTAIN A field_ebook_url NODE\n" .
+                 "\n likely the XML file is formatted or was recieved incorrectly\n";
+            return;
+        }
+
+        else if($books->count() < 1){
+            echo "\n BOOK COUNT WAS LESS THAN 1 \n";
+            return;
+        }
+
         else{
+            echo "\n------------------------------\n";
+            echo "\n\n number of books return = " . $books->count() . " \n";
+            echo "\n DELETING PREVIOUS DATA FROM DB\n";
             $DB->execute("TRUNCATE TABLE {block_etextbook}");
         }
+
         $tbook = new \stdClass();
+        $foundbookstring = "";
+
         // For loop to get all course numbers with books
         foreach ($books as $book) {
-            $tbook->book_url = (string)$book->field_ebook_url;
-            $tbook->img_url = (string)$book->field_ebook_image;
-            $tbook->title = (string)$book->field_ebook_title;
-            $tbook->dept = (string)$book->field_ebook_subject;
-            $tbook->course_title = (string)$book->field_course_title;
-            $tbook->course_number = (string)$book->field_course_number;
-            $tbook->section = (string)$book->field_ebook_section;
-            $tbook->instructor = (string)$book->Instructor;
-            $tbook->term = (string)$book->Term;
-            $termswitcharoo = explode(" ", $tbook->term);
-            $tbook->term = $termswitcharoo[1] . " " . $termswitcharoo[0];
+            $tbook->book_url =          (string)$book->field_ebook_url;
+            $tbook->img_url =           (string)$book->field_ebook_image;
+            $tbook->title =             (string)$book->field_ebook_title;
+            $tbook->dept =              (string)$book->field_ebook_subject;
+            $tbook->course_title =      (string)$book->field_course_title;
+            $tbook->course_number =     (string)$book->field_course_number;
+            $tbook->section =           (string)$book->field_ebook_section;
+            $tbook->instructor =        (string)$book->Instructor;
+            $tbook->term =              (string)$book->Term;
+            $termswitcharoo =           explode(" ", $tbook->term);
+            $tbook->term =              $termswitcharoo[1] . " " . $termswitcharoo[0];
 
             if(strlen($tbook->section) > 1){
                 $sections = explode(',', ($tbook->section));
