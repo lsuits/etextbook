@@ -48,7 +48,6 @@ class block_etextbook extends block_base {
     public function get_content() {
         GLOBAL $COURSE, $DB;
         $etextbooktable = "block_etextbook";
-        echo "<h1>here\n</h1>";
         if($DB->record_exists($etextbooktable, array('courseid'=> $COURSE->id))) {
             $this->content = new \stdClass;
             $this->content->text = '';
